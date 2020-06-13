@@ -4,10 +4,12 @@ let db = require("../db/db.json");
 
 module.exports = function (app) {
 
-
     app.get("/api/notes", function (req, res) {
-        res.send(db);
-    });
+        fs.readFile("./db/db.json", "utf8", (err, jsonString) => {
+            let noteData = JSON.parse(jsonString);
+            res.send(noteData);
+        });
+    })
 
     app.post("/api/notes", function (req, res) {
         let noteId = uuidv4();
@@ -19,32 +21,21 @@ module.exports = function (app) {
         fs.readFile("./db/db.json", "utf8", (err, jsonString) => {
             let noteData = JSON.parse(jsonString);
             noteData.push(newNote);
-            console.log(newNote);
             fs.writeFile("./db/db.json", JSON.stringify(noteData, null, 2), err => {
                 if (err) throw err;
-                res.send(db);
+                res.send(noteData);
             });
         });
     });
 
     app.delete("/api/notes/:id", function (req, res) {
-        // let noteId = uuidv4();
-        // let newNote = {
-        //     title: req.body.title,
-        //     text: req.body.text,
-        //     id: noteId
-        // }
-
+        let noteId = req.params.id;
         fs.readFile("./db/db.json", "utf8", (err, jsonString) => {
             let noteData = JSON.parse(jsonString);
-            fs.writeFile("./db/db.json", JSON.stringify(noteData, null, 2), err => {
-                console.log(noteData);
-                let id = noteData.id;
-                if (noteData.id !== id) {
-                    res.send(db);
-                } else {
-                    deleteNote();
-                }
+            let updatedNoteData = noteData.filter(note => note.id != noteId);
+            fs.writeFile("./db/db.json", JSON.stringify(updatedNoteData, null, 2), err => {
+                if (err) throw err;
+                res.send(updatedNoteData);
             })
         })
     });
