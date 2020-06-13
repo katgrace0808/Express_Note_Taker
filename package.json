@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "jquery": "^3.5.1",
-    "jsdom": "^16.2.2"
+    "jsdom": "^16.2.2",
+    "uuid": "^8.1.0"
   }
 }
